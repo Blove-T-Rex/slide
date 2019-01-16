@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<style>
+			*{
+				padding: 0;
+				margin: 0;
+				
+			}
+			ul{
+				list-style: none;
+			}
+			.slider{
+				position: relative;
+				width: 800px;
+				height: 450px;
+				border: 5px solid #ccc;
+				border-radius: 10px;
+				margin: 100px auto;
+			}
+			.slider .list .item{
+				position:absolute;
+				opacity: 0;
+			}
+			.slider .list .item:first-of-type{
+				opacity: 1;
+			}
+			.slider .list .item img{
+				display: block;
+				width: 800px;
+				height: 450px;
+				border-radius: 5px;
+			}
+			.btn{
+				width: 40px;
+				height: 30px;
+				position: absolute;
+				top: 43%;
+				font-size: 35px;
+				z-index: 1;
+				cursor: pointer;
+				user-select:none;
+				background: #fff;
+				opacity: .5;
+				color:#000;
+				border-radius: 5px;
+				text-align: center;
+				line-height: 30px;
+			}
+			.next{
+				right: 0;
+			}
+			.pagination{
+				position: absolute;
+				bottom: 10px;
+			}
+			.pagination .bullet{
+				width: 30px;
+				height: 30px;
+				border-radius: 50%;
+				margin-left: 10px;
+				background:#333;
+				line-height: 30px;
+				text-align: center;
+				border:3px solid #ccc;
+				border-color: rgba(255,255,255,0.5);
+				cursor: pointer;
+				user-select:none;
+				float: left;
+				color: #fff;
+			}
+			.pagination .bullet.focus{
+				transform: scale(1.2);
+				background: #f00;
+			}
+			
+		</style>
+	</head>
+	<body>
+		<div class="slider">
+			<ul class="list">
+				<li class="item"><img src="images/pic(1).jpg"/></li>
+				<li class="item"><img src="images/pic(2).jpg"/></li>
+				<li class="item"><img src="images/pic(3).jpg"/></li>
+				<li class="item"><img src="images/pic(4).jpg"/></li>
+			</ul>
+			<div class="btn prev">←</div>
+			<div class="btn next">→</div>
+			<ul class="pagination">
+				<li class="bullet focus">1</li>
+				<li class="bullet">2</li>
+				<li class="bullet">3</li>
+				<li class="bullet">4</li>
+			</ul>
+		</div>
+		<script src="js/utility.js"></script>
+		
+		<script type="text/javascript">
+			(function(){
+				let index = 0;
+				let items = document.querySelectorAll('.list .item');
+				let id;
+				let isStopped = false;
+				
+				function slideTo(idx){
+					for(var i = 0; i < items.length; i++){
+						animation(items[i],{
+							opacity: 0
+						})
+					}
+					
+					if(idx === items.length){
+						index = idx = 0;
+					}
+					
+					if(idx === -1){
+						index = idx = items.length - 1;
+					}
+					
+					document.querySelector('.focus').className= 'bullet';
+					document.querySelectorAll('.bullet')[idx].className = 'bullet focus';
+					
+					animation(items[idx],{
+						opacity:100
+					},function(){
+						if(isStopped === false){
+							autoPlay();
+						}
+					})
+				}
+				
+				function slideNext(){
+					index++;
+					slideTo(index);
+				}
+				
+				function slidePrev(){
+					index--;
+					slideTo(index);
+				}
+				
+				function autoPlay(){
+					clearInterval(id);
+					id = setInterval(slideNext, 2000);
+				}
+				
+				function stop(){
+					clearInterval(id);
+				}
+				
+				
+				function init(){
+					document.querySelector('.next').onclick = function(){
+						isStopped = false;
+						slideNext();
+					}
+					
+					document.querySelector('.prev').onclick = function(){
+						isStopped = false;
+						slidePrev();
+					}
+					
+					document.querySelector('.slider').onmouseover = function(){
+						isStopped = true;
+						stop();
+					}
+					document.querySelector('.slider').onmouseout = function(){
+						isStopped = false;
+						autoPlay();
+					}
+					
+					var bullets = document.querySelectorAll('.bullet');
+					for(let i = 0; i < bullets.length; i++){
+						bullets[i].onclick = function(){
+							isStopped = false;
+							index = i;
+							slideTo(index);
+						}
+					}
+					autoPlay();
+				}
+				
+				init();
+				
+			})()
+		</script>
+		
+		
+	</body>
+</html>

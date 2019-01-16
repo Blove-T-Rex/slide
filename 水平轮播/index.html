@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<style>
+			*{
+				padding: 0;
+				margin: 0;
+			}
+			
+			.banner{
+				width: 500px;
+				height: 300px;
+				border: 3px solid #999;
+				position: relative;
+				/*overflow: hidden;*/
+				margin: 100px auto;
+				border-radius: 10px;
+			}
+			.banner .list{
+				height: 300px;
+				list-style: none;
+				position: absolute;
+				left: 0;
+			}
+			.banner .list .item{
+				width: 500px;
+				height: 300px;
+				text-align: center;
+				float: left;
+			}
+			.banner .list .item img{
+				width: 500px;
+				height: 300px;
+				border-radius: 5px;
+			}
+			.btn{
+				position: absolute;
+				top:42%;
+				font-size: 40px;
+				cursor: pointer;
+				user-select:none;
+				background: #ccc;
+				opacity: .5;
+				border-radius: 5px;
+			}
+			.next{
+				right: 0;
+			}
+			.banner .pagination{
+				position: absolute;
+				bottom: 8px;
+				list-style: none;
+			}
+			.banner .pagination .bullet{
+				width: 30px;
+				height: 30px;
+				background: #ccc;
+				float: left;
+				margin-left: 5px;
+				line-height: 30px;
+				text-align: center;
+				cursor: pointer;
+				border-radius: 50%;
+				user-select:none;
+			}
+			.banner .padination .bullet .focus{
+				background: #000;
+				color: #fff;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="banner">
+			<ul class="list">
+				<li class="item"><img src="images/pic(1).jpg"/></li>
+				<li class="item"><img src="images/pic(2).jpg"/></li>
+				<li class="item"><img src="images/pic(3).jpg"/></li>
+				<li class="item"><img src="images/pic(4).jpg"/></li>
+			</ul>
+			<div class="btn prev">&lt;</div>
+			<div class="btn next">&gt;</div>
+			<ul class="pagination">
+				<li class="bullet focus">1</li>
+				<li class="bullet">2</li>
+				<li class="bullet">3</li>
+				<li class="bullet">4</li>
+			</ul>
+			
+		</div>
+		
+		
+		<script src="js/utility.js"></script>
+		
+		<script type="text/javascript">
+			(function(){
+				let index = 1;
+				let list = document.querySelector('.list');
+				let liWidth = list.children[0].offsetWidth;
+				
+				let slider1 = document.querySelector('.list .item:first-of-type');
+				let sliderLast = document.querySelector('.list .item:last-of-type');
+				
+				let slider1_cloned = slider1.cloneNode(true)
+				let sliderLast_cloned = sliderLast.cloneNode(true);
+				
+				list.appendChild(slider1_cloned);
+				list.insertBefore(sliderLast_cloned,slider1);
+				
+				list.style.width = liWidth * list.childElementCount + 'px';
+				list.style.left = -liWidth * index + 'px';
+				let id;
+				
+				function slideTo (idx){
+					if(idx === list.childElementCount){
+						list.style.left = -liWidth + 'px';
+						index = idx = 2;
+					}
+					
+					if(-1 === idx){
+						list.style.left = (list.childElementCount -2) * -liWidth + 'px';
+						index = idx = list.childElementCount -3
+					}
+					
+					var left = idx * liWidth;
+					console.log(idx);
+					
+					var focusIndex = idx - 1;
+					if(list.childElementCount - 1 === idx){
+						focusIndex = 0 ;
+						
+					}
+					if(idx ===0){
+						focusIndex = document.querySelectorAll('.bullet').length -1;
+						
+					}
+					document.querySelector('.focus').className = 'bullet';
+					
+					document.querySelectorAll('.bullet')[focusIndex].className = 'bullet focus';
+					animation(list,{
+						left: -1 * left
+					})
+				}
+				
+				function slideNext(){
+					index++;
+					slideTo(index);
+				}
+				
+				function slidePrev(){
+					index--;
+					slideTo(index);
+				}
+				
+				function init (){
+					document.querySelector('.next').onclick = function(){
+						slideNext();
+					}
+					
+					document.querySelector('.prev').onclick = function(){
+						slidePrev();
+					}
+					
+					document.querySelector('.banner').onmouseover = function(){
+						stop();
+					}
+					document.querySelector('.banner').onmouseout = function (){
+						autoPlay();
+					}
+					
+					let bullets = document.querySelectorAll('.bullet');
+					for(let i = 0 ; i < bullets.length; i++){
+						bullets[i].onclick = function(){
+							index = i;
+							slideTo(index);
+				
+						}
+					}
+					autoPlay();
+				}
+				
+				function autoPlay(){
+					id = setInterval (slideNext,2000);
+				}
+				
+				function stop(){
+					clearInterval(id);
+				}
+				
+				init();
+			})()
+		</script>
+	</body>
+</html>
